@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+  PLATAFORMA FICTÍCIA "GestorPed 2.4" — exemplo didático de front-end legado.
+  Usada nos encontros sobre migração de front-end (Tech Talks, ano 4).
+  Os problemas são propositais: layout em tabelas, largura fixa, estilos inline,
+  campos sem rótulo, links sem semântica, validação por alert e nada responsivo.
+  Telas: legado.html#lista  e  legado.html#form
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>GestorPed 2.4 - Sistema de Gestao de Pedidos</title>
+<style>
+body { margin: 0; background: #d4d0c8; font-family: Verdana, Arial; font-size: 11px; color: #000; }
+#tudo { width: 1240px; margin: 0 auto; background: #fff; border: 1px solid #666; }
+.topo { background: #1c3f7c url() repeat-x; background: linear-gradient(#4a78c2, #1c3f7c); color: #fff; height: 58px; }
+.topo td { color: #fff; }
+.logo { font-family: "Times New Roman"; font-size: 26px; font-weight: bold; font-style: italic; padding-left: 10px; text-shadow: 1px 1px 0 #000; }
+.menu { background: #e9e6dd; border-bottom: 2px solid #999; }
+.menu a { display: inline-block; padding: 5px 9px; color: #00c; border-right: 1px solid #aaa; font-weight: bold; }
+.lado { width: 170px; background: #f1efe7; border-right: 1px solid #999; vertical-align: top; padding: 6px; }
+.lado b { display: block; background: #1c3f7c; color: #fff; padding: 3px 5px; margin: 8px 0 3px; }
+.lado a { display: block; color: #00c; padding: 2px 4px; }
+.aviso { background: #ffffa8; border: 1px solid #c90; padding: 4px; margin: 6px 0; color: #c00; font-weight: bold; }
+h1 { font-size: 15px; color: #1c3f7c; border-bottom: 1px dotted #1c3f7c; margin: 4px 0 8px; }
+.grade { border-collapse: collapse; width: 100%; }
+.grade th { background: linear-gradient(#f6f6f6, #cfcfcf); border: 1px solid #888; padding: 3px; font-size: 10px; white-space: nowrap; }
+.grade td { border: 1px solid #b5b5b5; padding: 2px 3px; font-size: 10px; white-space: nowrap; }
+.grade tr.par td { background: #eef3fb; }
+.bt { font-family: Verdana; font-size: 10px; background: linear-gradient(#fff, #c8c8c8); border: 2px outset #ddd; padding: 2px 8px; }
+input.cx, select.cx { font-family: Verdana; font-size: 10px; border: 2px inset #ddd; }
+.rodape { background: #e9e6dd; border-top: 1px solid #999; text-align: center; font-size: 9px; padding: 5px; color: #555; }
+.form td { padding: 3px; }
+.obr { color: #f00; }
+fieldset { border: 1px solid #888; margin-bottom: 8px; }
+legend { color: #1c3f7c; font-weight: bold; }
+.tela { display: none; }
+</style>
+</head>
+<body>
+<div id="tudo">
+<table class="topo" width="100%" cellpadding="0" cellspacing="0"><tr>
+  <td class="logo">GestorPed <font size="2">2.4</font></td>
+  <td align="right" style="padding-right:10px">Usu&aacute;rio: <b>MARIA.SILVA</b> | Filial: <b>001 - MATRIZ</b> | 13/11/2026 09:41<br><a href="#" style="color:#ff0">Trocar senha</a> | <a href="#" style="color:#ff0">Sair</a></td>
+</tr></table>
+<div class="menu"><a href="#">Principal</a><a href="#">Cadastros</a><a href="#lista">Pedidos</a><a href="#">Estoque</a><a href="#">Financeiro</a><a href="#">Fiscal</a><a href="#">Relat&oacute;rios</a><a href="#">Utilit&aacute;rios</a><a href="#">Ajuda</a></div>
+<table width="100%" cellpadding="0" cellspacing="0"><tr>
+<td class="lado">
+  <b>PEDIDOS</b><a href="#form">&raquo; Incluir Pedido</a><a href="#lista">&raquo; Consultar Pedidos</a><a href="#">&raquo; Pedidos Pendentes</a><a href="#">&raquo; Cancelar Pedido</a><a href="#">&raquo; Reimprimir</a>
+  <b>CADASTROS</b><a href="#">&raquo; Clientes</a><a href="#">&raquo; Produtos</a><a href="#">&raquo; Vendedores</a><a href="#">&raquo; Transportadoras</a><a href="#">&raquo; Tabela de Pre&ccedil;os</a>
+  <b>RELAT&Oacute;RIOS</b><a href="#">&raquo; Vendas por Per&iacute;odo</a><a href="#">&raquo; Vendas por Vendedor</a><a href="#">&raquo; Comiss&otilde;es</a><a href="#">&raquo; Curva ABC</a>
+  <b>FAVORITOS</b><a href="#">&raquo; (nenhum)</a>
+</td>
+<td valign="top" style="padding:8px">
+
+<div class="tela" id="tela-lista">
+  <div class="aviso">ATEN&Ccedil;&Atilde;O: O sistema ficar&aacute; indispon&iacute;vel no s&aacute;bado das 22h &agrave;s 02h para manuten&ccedil;&atilde;o. Utilize o Internet Explorer 8 ou superior.</div>
+  <h1>Consulta de Pedidos</h1>
+  <table cellpadding="2" style="background:#f1efe7;border:1px solid #999;width:100%"><tr>
+    <td>C&oacute;d.Cli:</td><td><input class="cx" size="6"></td>
+    <td>Dt.Ini:</td><td><input class="cx" size="9" value="01/11/2026"></td>
+    <td>Dt.Fim:</td><td><input class="cx" size="9" value="13/11/2026"></td>
+    <td>Sit:</td><td><select class="cx"><option>TODAS</option></select></td>
+    <td>Vend:</td><td><select class="cx"><option>TODOS</option></select></td>
+    <td>Filial:</td><td><select class="cx"><option>001</option></select></td>
+    <td><input type="button" class="bt" value="Pesquisar"> <input type="button" class="bt" value="Limpar"> <input type="button" class="bt" value="Imprimir"></td>
+  </tr></table>
+  <br>
+  <table class="grade" id="grade"></table>
+  <p>Registros 1 a 16 de 1.284 &nbsp; [<a href="#">Primeira</a>] [<a href="#">Anterior</a>] <b>1</b> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">5</a> ... <a href="#">81</a> [<a href="#">Pr&oacute;xima</a>] [<a href="#">&Uacute;ltima</a>]</p>
+</div>
+
+<div class="tela" id="tela-form">
+  <h1>Inclus&atilde;o de Pedido</h1>
+  <div class="aviso">Campos com <span class="obr">*</span> s&atilde;o obrigat&oacute;rios. N&Atilde;O utilize o bot&atilde;o Voltar do navegador.</div>
+  <fieldset><legend>Dados do Pedido</legend>
+  <table class="form">
+    <tr><td align="right">Nr.Pedido:</td><td><input class="cx" size="8" value="(AUTO)" disabled></td><td align="right">Dt.Emiss&atilde;o:<span class="obr">*</span></td><td><input class="cx" size="10" value="13/11/2026"></td><td align="right">Filial:<span class="obr">*</span></td><td><select class="cx"><option>001 - MATRIZ</option></select></td></tr>
+    <tr><td align="right">C&oacute;d.Cliente:<span class="obr">*</span></td><td><input class="cx" size="8"> <input type="button" class="bt" value="..."></td><td align="right">Raz&atilde;o Social:</td><td colspan="3"><input class="cx" size="60" disabled></td></tr>
+    <tr><td align="right">Vendedor:<span class="obr">*</span></td><td><select class="cx"><option>-- SELECIONE --</option></select></td><td align="right">Cond.Pgto:<span class="obr">*</span></td><td><select class="cx"><option>-- SELECIONE --</option></select></td><td align="right">Tab.Pre&ccedil;o:<span class="obr">*</span></td><td><select class="cx"><option>-- SELECIONE --</option></select></td></tr>
+    <tr><td align="right">Transp.:</td><td><select class="cx"><option>-- SELECIONE --</option></select></td><td align="right">Tp.Frete:</td><td><select class="cx"><option>CIF</option><option>FOB</option></select></td><td align="right">Dt.Entrega:</td><td><input class="cx" size="10" value="__/__/____"></td></tr>
+    <tr><td align="right" valign="top">Obs.:</td><td colspan="5"><textarea class="cx" cols="90" rows="2"></textarea></td></tr>
+  </table></fieldset>
+  <fieldset><legend>Itens do Pedido</legend>
+  <table class="form"><tr>
+    <td>C&oacute;d.Prod:<span class="obr">*</span> <input class="cx" size="8"> <input type="button" class="bt" value="..."></td>
+    <td>Qtde:<span class="obr">*</span> <input class="cx" size="5"></td>
+    <td>Vl.Unit: <input class="cx" size="8" disabled></td>
+    <td>%Desc: <input class="cx" size="4"></td>
+    <td><input type="button" class="bt" value="Incluir Item"></td>
+  </tr></table>
+  <table class="grade">
+    <tr><th>Seq</th><th>C&oacute;d.Prod</th><th>Descri&ccedil;&atilde;o</th><th>UN</th><th>Qtde</th><th>Vl.Unit</th><th>%Desc</th><th>Vl.Total</th><th>A&ccedil;&otilde;es</th></tr>
+    <tr><td>001</td><td>004512</td><td>TECLADO MEC ABNT2 PRETO</td><td>PC</td><td align="right">2,000</td><td align="right">289,90</td><td align="right">0,00</td><td align="right">579,80</td><td><a href="#">Alt</a> | <a href="#">Exc</a></td></tr>
+    <tr class="par"><td>002</td><td>007730</td><td>MOUSE S/FIO 1600DPI</td><td>PC</td><td align="right">2,000</td><td align="right">89,90</td><td align="right">5,00</td><td align="right">170,81</td><td><a href="#">Alt</a> | <a href="#">Exc</a></td></tr>
+  </table>
+  <p align="right"><b>TOTAL DO PEDIDO: R$ 750,61</b></p></fieldset>
+  <center><input type="button" class="bt" value="Gravar" onclick="alert('ERRO 1042: Preencha os campos obrigatorios!')"> <input type="button" class="bt" value="Gravar e Novo"> <input type="button" class="bt" value="Limpar"> <input type="button" class="bt" value="Cancelar"></center>
+</div>
+
+</td></tr></table>
+<div class="rodape">GestorPed 2.4.17 build 20140322 &copy; 2009-2014 - Melhor visualizado em 1024x768 - Suporte: ramal 2210</div>
+</div>
+
+<script>
+// Dados fixos, HTML montado por concatenação de texto e sem escape:
+// é assim que muito código legado funciona (e é por isso que ele é frágil).
+var p = [
+ ["0012841","13/11/2026","000482","COMERCIAL SANTOS & FILHOS LTDA","J.PEREIRA","001","28DD","1.249,90","A"],
+ ["0012840","13/11/2026","001107","MERCADO BOA VISTA EIRELI","M.SILVA","001","AV","389,00","F"],
+ ["0012839","12/11/2026","000073","DISTRIBUIDORA PAULISTA S/A","J.PEREIRA","001","30/60","8.730,45","P"],
+ ["0012838","12/11/2026","002250","PAPELARIA CENTRAL ME","A.COSTA","002","28DD","215,30","C"],
+ ["0012837","12/11/2026","000482","COMERCIAL SANTOS & FILHOS LTDA","J.PEREIRA","001","28DD","2.010,00","F"],
+ ["0012836","11/11/2026","000915","AUTO PECAS GARCA LTDA","R.LIMA","001","AV","640,75","E"],
+ ["0012835","11/11/2026","001388","RESTAURANTE SABOR DA TERRA","M.SILVA","002","7DD","1.102,20","E"],
+ ["0012834","11/11/2026","000073","DISTRIBUIDORA PAULISTA S/A","J.PEREIRA","001","30/60","12.480,00","F"],
+ ["0012833","10/11/2026","003021","CLINICA VIDA E SAUDE","A.COSTA","001","28DD","930,10","A"],
+ ["0012832","10/11/2026","000640","ESCOLA NOVO SABER","R.LIMA","002","30DD","3.415,90","P"],
+ ["0012831","10/11/2026","001107","MERCADO BOA VISTA EIRELI","M.SILVA","001","AV","271,45","F"],
+ ["0012830","09/11/2026","002250","PAPELARIA CENTRAL ME","A.COSTA","002","28DD","188,00","E"],
+ ["0012829","09/11/2026","000915","AUTO PECAS GARCA LTDA","R.LIMA","001","AV","1.560,30","C"],
+ ["0012828","09/11/2026","000482","COMERCIAL SANTOS & FILHOS LTDA","J.PEREIRA","001","28DD","745,60","F"],
+ ["0012827","06/11/2026","001388","RESTAURANTE SABOR DA TERRA","M.SILVA","002","7DD","2.290,00","F"],
+ ["0012826","06/11/2026","003021","CLINICA VIDA E SAUDE","A.COSTA","001","28DD","410,25","A"]
+];
+var h = "<tr><th>Nr.Ped</th><th>Dt.Emis</th><th>C&oacute;d.Cli</th><th>Raz&atilde;o Social</th><th>Vend</th><th>Fil</th><th>Cond.Pg</th><th>Vl.Total</th><th>Sit</th><th>NF</th><th>A&ccedil;&otilde;es</th></tr>";
+for (var i = 0; i < p.length; i++) {
+  h += "<tr" + (i % 2 ? " class=par" : "") + ">";
+  for (var j = 0; j < 9; j++) h += "<td" + (j == 7 ? " align=right" : "") + ">" + p[i][j] + "</td>";
+  h += "<td>" + (p[i][8] == "F" ? "00" + (4000 + i) : "-") + "</td>";
+  h += "<td><a href=#>Ver</a> | <a href=#>Alt</a> | <a href=#>Exc</a> | <a href=#>Imp</a> | <a href=#>Dup</a></td></tr>";
+}
+document.getElementById("grade").innerHTML = h;
+function mostrar() {
+  var t = location.hash == "#form" ? "form" : "lista";
+  document.getElementById("tela-lista").style.display = t == "lista" ? "block" : "none";
+  document.getElementById("tela-form").style.display = t == "form" ? "block" : "none";
+}
+window.onhashchange = mostrar; mostrar();
+</script>
+</body>
+</html>

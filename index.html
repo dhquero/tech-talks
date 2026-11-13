@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tech Talks — 48 temas em 4 anos</title>
+  <meta name="description" content="Programa mensal de apresentações técnicas do time: 48 temas de desenvolvimento, arquitetura, QA, infraestrutura, IA e gestão de times.">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Aplica o tema salvo antes da primeira pintura, para não piscar.
+    try {
+      var t = localStorage.getItem("tema-visual");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="pular" href="#programa">Pular para o programa</a>
+
+  <header class="topo">
+    <div class="container topo__linha">
+      <span class="marca"><span class="marca__sinal" aria-hidden="true">&gt;_</span> <span id="marca-nome">Tech Talks</span></span>
+      <button class="botao-tema" id="botao-tema" type="button" aria-label="Alternar tema claro e escuro">
+        <span aria-hidden="true">◐</span> Tema
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="hero__texto">
+        <p class="rotulo" id="rotulo-programa">Programa de 4 anos · 48 encontros · 1 hora por mês</p>
+        <h1>Aprender junto,<br>um tema por mês.</h1>
+        <p class="hero__sub" id="subtitulo"></p>
+        <ul class="numeros" id="numeros" aria-label="Resumo do programa"></ul>
+      </div>
+      <aside class="proximo" id="proximo" aria-live="polite"></aside>
+    </section>
+
+    <section class="container formato" aria-labelledby="titulo-formato">
+      <h2 id="titulo-formato">Como funciona cada encontro</h2>
+      <div class="barra-roteiro" id="barra-roteiro" role="img" aria-label="Divisão dos 60 minutos do encontro"></div>
+      <ol class="lista-roteiro" id="lista-roteiro"></ol>
+    </section>
+
+    <section class="container programa" id="programa" aria-labelledby="titulo-programa">
+      <h2 id="titulo-programa">O programa</h2>
+
+      <div class="controles">
+        <div class="abas" id="abas-ano" role="group" aria-label="Filtrar por ano"></div>
+        <label class="busca">
+          <span class="so-leitor">Buscar tema</span>
+          <input type="search" id="busca" placeholder="Buscar tema, ex.: arquitetura" autocomplete="off">
+        </label>
+      </div>
+      <div class="chips" id="chips-cat" role="group" aria-label="Filtrar por categoria"></div>
+
+      <p class="contagem" id="contagem" aria-live="polite"></p>
+      <div id="lista"></div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="container">
+      <p>Para definir quem apresenta ou mudar a ordem dos temas, edite <code>js/temas.js</code>.</p>
+    </div>
+  </footer>
+
+  <dialog class="modal" id="modal" aria-labelledby="modal-titulo">
+    <div class="modal__conteudo" id="modal-conteudo"></div>
+  </dialog>
+
+  <dialog class="deck" id="deck" aria-label="Apresentação do tema"></dialog>
+
+  <script src="js/temas.js"></script>
+  <script src="js/slides.js"></script>
+  <script src="js/praticas.js"></script>
+  <script src="js/ano4.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/apresentacao.js"></script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--
+  PLATAFORMA FICTÍCIA "Pedidos" — a versão nova do GestorPed 2.4 (legado.html).
+  Usada nos encontros sobre migração de front-end (Tech Talks, ano 4).
+  O que mudou: HTML semântico, tokens de design, layout responsivo, rótulos em
+  todos os campos, validação junto ao campo e funcionalidades novas
+  (indicadores, busca, filtros rápidos, exportação e uso no celular).
+  Telas: novo.html#lista  e  novo.html#form
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos</title>
+<style>
+:root {
+  --fundo: #f5f6f8; --superficie: #fff; --tinta: #16191f; --suave: #5b6472; --linha: #e3e6eb;
+  --acao: #2f5bd8; --acao-tinta: #fff; --raio: 10px;
+  --ok: #17794a; --ok-fundo: #e2f5ea; --alerta: #8a5a00; --alerta-fundo: #fdf0d2;
+  --info: #2f5bd8; --info-fundo: #e6ecfc; --erro: #b3261e; --erro-fundo: #fbe7e5; --neutro-fundo: #eceef2;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); color: var(--tinta); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: inherit; text-decoration: none; }
+.app { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
+.nav { background: var(--superficie); border-right: 1px solid var(--linha); padding: 1.25rem .9rem; }
+.marca { font-weight: 800; font-size: 1.15rem; letter-spacing: -.02em; padding: 0 .6rem 1.2rem; }
+.marca span { color: var(--acao); }
+.nav a { display: block; padding: .5rem .7rem; border-radius: 8px; color: var(--suave); font-weight: 500; }
+.nav a[aria-current] { background: var(--info-fundo); color: var(--acao); font-weight: 600; }
+main { padding: 1.75rem clamp(1rem, 3vw, 2.25rem); min-width: 0; }
+.cabeca { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+h1 { font-size: 1.6rem; letter-spacing: -.02em; margin: 0; }
+.sub { color: var(--suave); margin: 0; font-size: .9rem; }
+.botao { display: inline-flex; align-items: center; gap: .4rem; font: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; padding: .55rem 1rem; border: 1px solid var(--linha); background: var(--superficie); color: var(--tinta); }
+.botao--primario { background: var(--acao); border-color: var(--acao); color: var(--acao-tinta); }
+.indicadores { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; margin-bottom: 1.25rem; }
+.indicador { background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio); padding: .9rem 1rem; }
+.indicador span { color: var(--suave); font-size: .82rem; }
+.indicador strong { display: block; font-size: 1.5rem; letter-spacing: -.02em; }
+.indicador em { font-style: normal; font-size: .8rem; color: var(--ok); }
+.painel { background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio); }
+.filtros { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; padding: .9rem 1rem; border-bottom: 1px solid var(--linha); }
+.busca { flex: 1 1 220px; font: inherit; padding: .5rem .8rem; border: 1px solid var(--linha); border-radius: 8px; background: var(--fundo); }
+.chip { font: inherit; font-size: .85rem; cursor: pointer; border: 1px solid var(--linha); background: none; border-radius: 999px; padding: .3rem .8rem; color: var(--suave); }
+.chip[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--suave); padding: .7rem 1rem; border-bottom: 1px solid var(--linha); }
+td { padding: .75rem 1rem; border-bottom: 1px solid var(--linha); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+td.valor, th.valor { text-align: right; font-variant-numeric: tabular-nums; }
+.cliente { font-weight: 600; }
+.cliente small { display: block; color: var(--suave); font-weight: 400; }
+.selo { display: inline-block; font-size: .78rem; font-weight: 600; padding: .15rem .6rem; border-radius: 999px; }
+.selo--aberto { background: var(--info-fundo); color: var(--info); }
+.selo--faturado { background: var(--ok-fundo); color: var(--ok); }
+.selo--pendente { background: var(--alerta-fundo); color: var(--alerta); }
+.selo--cancelado { background: var(--erro-fundo); color: var(--erro); }
+.selo--enviado { background: var(--neutro-fundo); color: var(--suave); }
+.rodape-tabela { display: flex; justify-content: space-between; align-items: center; padding: .8rem 1rem; color: var(--suave); font-size: .88rem; border-top: 1px solid var(--linha); }
+.cartoes { display: none; }
+.formulario { max-width: 760px; }
+.grupo { background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio); padding: 1.25rem; margin-bottom: 1rem; }
+.grupo h2 { font-size: 1.05rem; margin: 0 0 1rem; }
+.campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.campo { display: grid; gap: .3rem; }
+.campo--largo { grid-column: 1 / -1; }
+label { font-weight: 600; font-size: .88rem; }
+.dica { color: var(--suave); font-size: .8rem; }
+input, select { font: inherit; padding: .55rem .75rem; border: 1px solid #c9ced6; border-radius: 8px; background: #fff; width: 100%; }
+input:focus, select:focus, .botao:focus-visible, .chip:focus-visible { outline: 3px solid #9db4f5; outline-offset: 1px; }
+.campo--erro input { border-color: var(--erro); background: var(--erro-fundo); }
+.erro { color: var(--erro); font-size: .82rem; font-weight: 600; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) 90px 110px 28px; gap: .75rem; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--linha); }
+.item small { color: var(--suave); display: block; }
+.total { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; padding-top: .9rem; }
+.acoes { display: flex; gap: .6rem; justify-content: flex-end; }
+.tela { display: none; }
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; }
+  .nav { display: flex; align-items: center; gap: .25rem; padding: .6rem .8rem; border-right: 0; border-bottom: 1px solid var(--linha); overflow-x: auto; }
+  .marca { padding: 0 .6rem 0 0; }
+  .nav a { white-space: nowrap; padding: .35rem .6rem; }
+  .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .painel table, .rodape-tabela span:last-child { display: none; }
+  .cartoes { display: grid; }
+  .cartao { display: grid; grid-template-columns: 1fr auto; gap: .2rem .75rem; padding: .85rem 1rem; border-bottom: 1px solid var(--linha); }
+  .cartao small { color: var(--suave); }
+  .cartao b { text-align: right; }
+  .campos { grid-template-columns: 1fr; }
+  .cabeca .botao { flex: 1; justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav" aria-label="Principal">
+    <div class="marca">Pedidos<span>.</span></div>
+    <a href="#">Início</a>
+    <a href="#lista" aria-current="page">Pedidos</a>
+    <a href="#">Clientes</a>
+    <a href="#">Produtos</a>
+    <a href="#">Relatórios</a>
+  </nav>
+
+  <main>
+    <section class="tela" id="tela-lista">
+      <div class="cabeca">
+        <div><h1>Pedidos</h1><p class="sub">1.284 pedidos em novembro</p></div>
+        <div style="display:flex;gap:.6rem;flex:0 1 auto">
+          <button class="botao" type="button">Exportar CSV</button>
+          <a class="botao botao--primario" href="#form">+ Novo pedido</a>
+        </div>
+      </div>
+
+      <div class="indicadores">
+        <div class="indicador"><span>Vendas no mês</span><strong>R$ 412 mil</strong><em>+8% sobre outubro</em></div>
+        <div class="indicador"><span>Em aberto</span><strong>37</strong><em style="color:var(--suave)">R$ 58 mil</em></div>
+        <div class="indicador"><span>Aguardando pagamento</span><strong>12</strong><em style="color:var(--alerta)">3 vencem hoje</em></div>
+        <div class="indicador"><span>Ticket médio</span><strong>R$ 321</strong><em>+2%</em></div>
+      </div>
+
+      <div class="painel">
+        <div class="filtros">
+          <input class="busca" type="search" placeholder="Buscar por cliente, número ou produto" aria-label="Buscar pedidos">
+          <button class="chip" aria-pressed="true">Todos</button>
+          <button class="chip" aria-pressed="false">Em aberto</button>
+          <button class="chip" aria-pressed="false">Pendentes</button>
+          <button class="chip" aria-pressed="false">Faturados</button>
+        </div>
+        <table>
+          <thead><tr><th>Pedido</th><th>Cliente</th><th>Data</th><th>Situação</th><th class="valor">Total</th></tr></thead>
+          <tbody id="linhas"></tbody>
+        </table>
+        <div class="cartoes" id="cartoes"></div>
+        <div class="rodape-tabela"><span>Mostrando 8 de 1.284</span><span>Página 1 de 161 &nbsp;‹ &nbsp;›</span></div>
+      </div>
+    </section>
+
+    <section class="tela" id="tela-form">
+      <div class="cabeca"><div><h1>Novo pedido</h1><p class="sub">Rascunho salvo automaticamente às 09:41</p></div></div>
+      <form class="formulario" novalidate>
+        <div class="grupo">
+          <h2>Cliente e condições</h2>
+          <div class="campos">
+            <div class="campo campo--largo campo--erro">
+              <label for="cliente">Cliente</label>
+              <input id="cliente" type="text" placeholder="Digite o nome ou o CNPJ" aria-describedby="erro-cliente" aria-invalid="true">
+              <span class="erro" id="erro-cliente">Escolha um cliente para continuar.</span>
+            </div>
+            <div class="campo">
+              <label for="pagamento">Forma de pagamento</label>
+              <select id="pagamento"><option>28 dias</option><option>À vista</option><option>30 e 60 dias</option></select>
+            </div>
+            <div class="campo">
+              <label for="entrega">Entrega prevista</label>
+              <input id="entrega" type="date" value="2026-11-20">
+              <span class="dica">Opcional</span>
+            </div>
+          </div>
+        </div>
+        <div class="grupo">
+          <h2>Itens</h2>
+          <div class="campo"><label for="produto">Adicionar produto</label><input id="produto" type="search" placeholder="Buscar por nome ou código"></div>
+          <div class="item"><div>Teclado mecânico ABNT2 preto<small>Cód. 4512 · R$ 289,90 cada</small></div><input aria-label="Quantidade de Teclado mecânico" type="number" value="2" min="1"><b style="text-align:right">R$ 579,80</b><button class="chip" type="button" aria-label="Remover Teclado mecânico">×</button></div>
+          <div class="item"><div>Mouse sem fio 1600 DPI<small>Cód. 7730 · R$ 89,90 cada · 5% de desconto</small></div><input aria-label="Quantidade de Mouse sem fio" type="number" value="2" min="1"><b style="text-align:right">R$ 170,81</b><button class="chip" type="button" aria-label="Remover Mouse sem fio">×</button></div>
+          <div class="total"><span>Total</span><span>R$ 750,61</span></div>
+        </div>
+        <div class="acoes"><a class="botao" href="#lista">Cancelar</a><button class="botao botao--primario" type="button">Criar pedido</button></div>
+      </form>
+    </section>
+  </main>
+</div>
+
+<script>
+const pedidos = [
+  { numero: 12841, cliente: "Comercial Santos & Filhos", cidade: "Garça, SP", data: "13 nov", situacao: "aberto", total: "R$ 1.249,90" },
+  { numero: 12840, cliente: "Mercado Boa Vista", cidade: "Marília, SP", data: "13 nov", situacao: "faturado", total: "R$ 389,00" },
+  { numero: 12839, cliente: "Distribuidora Paulista", cidade: "Bauru, SP", data: "12 nov", situacao: "pendente", total: "R$ 8.730,45" },
+  { numero: 12838, cliente: "Papelaria Central", cidade: "Garça, SP", data: "12 nov", situacao: "cancelado", total: "R$ 215,30" },
+  { numero: 12837, cliente: "Comercial Santos & Filhos", cidade: "Garça, SP", data: "12 nov", situacao: "faturado", total: "R$ 2.010,00" },
+  { numero: 12836, cliente: "Auto Peças Garça", cidade: "Garça, SP", data: "11 nov", situacao: "enviado", total: "R$ 640,75" },
+  { numero: 12835, cliente: "Restaurante Sabor da Terra", cidade: "Marília, SP", data: "11 nov", situacao: "enviado", total: "R$ 1.102,20" },
+  { numero: 12834, cliente: "Distribuidora Paulista", cidade: "Bauru, SP", data: "11 nov", situacao: "faturado", total: "R$ 12.480,00" },
+];
+const rotulos = { aberto: "Em aberto", faturado: "Faturado", pendente: "Aguardando pagamento", cancelado: "Cancelado", enviado: "Enviado" };
+
+function elemento(marca, texto, classe) {
+  const el = document.createElement(marca);
+  if (texto !== undefined) el.textContent = texto;   // textContent: sem risco de XSS
+  if (classe) el.className = classe;
+  return el;
+}
+
+function selo(situacao) {
+  return elemento("span", rotulos[situacao], "selo selo--" + situacao);
+}
+
+for (const pedido of pedidos) {
+  const linha = document.createElement("tr");
+  const cliente = elemento("td", pedido.cliente, "cliente");
+  cliente.append(elemento("small", pedido.cidade));
+  const situacao = document.createElement("td");
+  situacao.append(selo(pedido.situacao));
+  linha.append(elemento("td", "#" + pedido.numero), cliente, elemento("td", pedido.data), situacao, elemento("td", pedido.total, "valor"));
+  document.querySelector("#linhas").append(linha);
+
+  const cartao = elemento("div", undefined, "cartao");
+  const nome = elemento("div", pedido.cliente, "cliente");
+  const info = elemento("small", "#" + pedido.numero + " · " + pedido.data);
+  const direita = document.createElement("div");
+  direita.append(selo(pedido.situacao));
+  cartao.append(nome, elemento("b", pedido.total), info, direita);
+  document.querySelector("#cartoes").append(cartao);
+}
+
+function mostrar() {
+  const tela = location.hash === "#form" ? "form" : "lista";
+  document.querySelector("#tela-lista").style.display = tela === "lista" ? "block" : "none";
+  document.querySelector("#tela-form").style.display = tela === "form" ? "block" : "none";
+}
+window.addEventListener("hashchange", mostrar);
+mostrar();
+</script>
+</body>
+</html>
